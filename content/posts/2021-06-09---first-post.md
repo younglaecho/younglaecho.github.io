@@ -1,5 +1,5 @@
 ---
-title: Gatsby 블로그 글 작성하기2
+title: Gatsby 블로그 글 작성하기3
 date: "2021-06-09T23:41:32.169Z"
 template: "post"
 draft: false
