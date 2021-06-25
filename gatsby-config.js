@@ -121,7 +121,11 @@ module.exports = {
             options: { wrapperStyle: 'margin-bottom: 1.0725rem' }
           },
           {
-            resolve: 'gatsby-remark-highlight-code'
+            resolve: 'gatsby-remark-highlight-code',
+            options: {
+              terminal: 'carbon',
+              theme: 'blackboard'
+            }
           },
           'gatsby-remark-autolink-headers',
           'gatsby-remark-prismjs',
