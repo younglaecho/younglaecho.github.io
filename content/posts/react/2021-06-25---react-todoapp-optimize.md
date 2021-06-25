@@ -4,7 +4,7 @@ date: "2021-06-25T13:00:00.169Z"
 template: "post"
 draft: false
 slug: "react-todoapp-optimization"
-category: "react"
+category: "gatsby"
 tags:
   - "react"
 description: "리액트 일정관리 앱 컴포넌트 성능최적화"
