@@ -14,7 +14,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
 1. 일정관리 앱의 구조는 아래와 같다.
 
-<img src="/img/일정관리.png" alt="image-20210621183841192" style="zoom:67%;" />
+<img src="/react/img/일정관리.png" alt="image-20210621183841192" style="zoom:67%;" />
 
 2. 많은 데이터 렌더링하기
 
