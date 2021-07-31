@@ -20,7 +20,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    - for 문을 이용하여 2500개의 데이터를 만들어주었다.
 
-     ```react
+     ```javascript
      //App.js
 
      function createBulkTodos() {
@@ -37,7 +37,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
      ...
      ```
 
-     ```react
+     ```javascript
      //App.js
 
      const App = () => {
@@ -70,37 +70,37 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    React.memo는 컴포넌트의 props가 바뀌지 않는다면, 리렌더링 하지 않도록 설정합니다.
 
-   ```react
-   import React from 'react';
+   ```javascript
+   import React from "react";
    import {
      MdCheckBoxOutlineBlank,
      MdCheckBox,
-     MdRemoveCircleOutline
-   } from 'react-icons/md';
-   import cn from 'classname'
-   import './TodoListItem.scss';
+     MdRemoveCircleOutline,
+   } from "react-icons/md";
+   import cn from "classname";
+   import "./TodoListItem.scss";
 
-   const TodoListItem = ({todo, onRemove, onToggle}) => {
-     const {id, text, checked} = todo;
+   const TodoListItem = ({ todo, onRemove, onToggle }) => {
+     const { id, text, checked } = todo;
 
      return (
        <div className="TodoListItem">
-         <div className={cn('checkbox', {checked})} onClick={()=> onToggle(id)}>
+         <div
+           className={cn("checkbox", { checked })}
+           onClick={() => onToggle(id)}
+         >
            {checked ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
            <div className="text"> {text} </div>
-
          </div>
          <div className="remove" onClick={() => onRemove(id)}>
            <MdRemoveCircleOutline />
          </div>
          <p>{checked}</p>
-
        </div>
      );
    };
 
    export default React.memo(TodoListItem);
-
    ```
 
    props가 변경되지 않을 때 리렌더링하지 않을 컴포넌트이다. 해당 컴포넌트를 export할 때 컴포넌트를 React.memo에 담아서 내보낸다.
@@ -109,22 +109,24 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    현재 onToggle과 onRemove는 아래에 보이는 것과 같이 todos를 참조하기 때문에 todos의 값이 바뀔때마다 변하게 되어 모든 TodoListItem 컴포넌트가 리렌더링 된다.
 
-   ```react
-     const onRemove = useCallback(
-       id => {
-         setTodos(todos.filter(todo => todo.id !== id))
-       },
-       [todos]
-     )
+   ```javascript
+   const onRemove = useCallback(
+     (id) => {
+       setTodos(todos.filter((todo) => todo.id !== id));
+     },
+     [todos]
+   );
 
-     const onToggle = useCallback(
-       id => {
-         setTodos(todos.map(todo => (
-           todo.id === id ? {...todo, checked: !todo.checked} : todo
-         )))
-       },
-       [todos]
-     )
+   const onToggle = useCallback(
+     (id) => {
+       setTodos(
+         todos.map((todo) =>
+           todo.id === id ? { ...todo, checked: !todo.checked } : todo
+         )
+       );
+     },
+     [todos]
+   );
    ```
 
    이를 해결하는 방법은 두가지가 있다.
@@ -136,98 +138,100 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    setState의 함수값으로 어떤 값을 넣지 않고, 기존 state를 변환시켜주는 함수를 매개변수로 넣을 수 있다.
 
-   ```react
-   cosnt [number, setNumber] = useState(0);
+   ```javascript
+   cosnt[(number, setNumber)] = useState(0);
    const onIncrease = useCallback(
-   	() => setNumber(prevNumber => prevNumber + 1),
-   	[],
+     () => setNumber((prevNumber) => prevNumber + 1),
+     []
    );
    ```
 
    이를 적용하면 onToggle, onRemove에서 todos를 직접 사용하지 않기 때문에 todos가 변하더라도 TodoListItem가 리렌더링 되지 않는다.(해당 id에 해당하는 컴포넌트만 리렌더링 된다.)
 
-   ```react
-     const onRemove = useCallback(
-       id => {
-         setTodos(todos => todos.filter(todo => todo.id !== id))
-       },
-       []
-     )
+   ```javascript
+   const onRemove = useCallback((id) => {
+     setTodos((todos) => todos.filter((todo) => todo.id !== id));
+   }, []);
 
-     const onToggle = useCallback(
-       id => {
-         setTodos(todos => todos.map(todo => (
-           todo.id === id ? {...todo, checked: !todo.checked} : todo
-         )))
-       },
-       []
-     )
+   const onToggle = useCallback((id) => {
+     setTodos((todos) =>
+       todos.map((todo) =>
+         todo.id === id ? { ...todo, checked: !todo.checked } : todo
+       )
+     );
+   }, []);
    ```
 
    이 방법을 사용했을 떄 34ms로 성능이 크게 향상되었다.
 
    6.2. useReducer
 
-   ```react
-   import React, {useRef, useState, useCallback, useReducer } from 'react';
-   import TodoInsert from './components/TodoInsert';
-   import TodoList from './components/TodoList';
-   import TodoTemplate from './components/TodoTemplate';
+   ```javascript
+   import React, { useRef, useState, useCallback, useReducer } from "react";
+   import TodoInsert from "./components/TodoInsert";
+   import TodoList from "./components/TodoList";
+   import TodoTemplate from "./components/TodoTemplate";
 
    function createBulkTodos() {
      const array = [];
-     for (let i = 0; i <=2500; i++) {
+     for (let i = 0; i <= 2500; i++) {
        array.push({
          id: i,
          text: `할 일  ${i}`,
-         checked: false
+         checked: false,
        });
      }
-     return array
+     return array;
    }
 
-   function todoReducer (todos, action) {
+   function todoReducer(todos, action) {
      switch (action.type) {
-       case 'INSERT':
+       case "INSERT":
          return todos.concat(action.todo);
-       case 'REMOVE':
-         return todos.filter(todo => todo.id !== action.id);
-       case 'TOGGLE':
-         return todos.map(todo => todo.id === action.id ? {...todo, checked : !todo.checked}: todo);
+       case "REMOVE":
+         return todos.filter((todo) => todo.id !== action.id);
+       case "TOGGLE":
+         return todos.map((todo) =>
+           todo.id === action.id ? { ...todo, checked: !todo.checked } : todo
+         );
        default:
          return todos;
      }
    }
    const App = () => {
-     const [todos, dispatch] = useReducer(todoReducer, undefined, createBulkTodos);
+     const [todos, dispatch] = useReducer(
+       todoReducer,
+       undefined,
+       createBulkTodos
+     );
      // 원래 useReducer의 두번째 매개변수에 초기 state가 들어가는게 맞지만, 리렌더링 할 때마다 함수를 실행하게 되는 문제가 있다.
      // 위와 같은 방법으로 세번째에 함수를 참조하면 초기 렌더링 시에만 함수가 실행되게 할 수 있다.
 
      const nextId = useRef(2501);
 
-     const onInsert = useCallback(text => {
+     const onInsert = useCallback((text) => {
        const todo = {
          id: nextId.current,
          text,
-         checked:false
+         checked: false,
        };
-       dispatch({type:'INSERT', todo});
-       nextId.current +=1;
+       dispatch({ type: "INSERT", todo });
+       nextId.current += 1;
      }, []);
 
-     const onRemove = useCallback(id => {
-       dispatch({type:'REMOVE', id})
-     }, [])
+     const onRemove = useCallback((id) => {
+       dispatch({ type: "REMOVE", id });
+     }, []);
 
-     const onToggle = useCallback(id => {
-       dispatch({type:'TOGGLE', id})
-     }, [])
+     const onToggle = useCallback((id) => {
+       dispatch({ type: "TOGGLE", id });
+     }, []);
      return (
        <TodoTemplate>
          <TodoInsert onInsert={onInsert} />
-         <TodoList onRemove={onRemove} onToggle={onToggle} todos={todos}/>
+         <TodoList onRemove={onRemove} onToggle={onToggle} todos={todos} />
        </TodoTemplate>
-     )
+     );
    };
 
    export default App;
@@ -243,30 +247,30 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    React-virtualized를 활용하면 스크롤을 통해 보이기전인 컴포넌트는 렌더링하지 않게 만들 수 있다.
 
-   ```react
+   ```javascript
    //TodoList.js
 
-   import React, { useCallback } from 'react';
-   import { List } from 'react-virtualized';
-   import TodoListItem from './TodoListItem';
-   import './TodoList.scss';
+   import React, { useCallback } from "react";
+   import { List } from "react-virtualized";
+   import TodoListItem from "./TodoListItem";
+   import "./TodoList.scss";
 
-   const TodoList = ({todos, onRemove, onToggle}) => {
+   const TodoList = ({ todos, onRemove, onToggle }) => {
      const rowRenderer = useCallback(
-       ({index, key, style}) => {
+       ({ index, key, style }) => {
          const todo = todos[index];
          return (
            <TodoListItem
-             todo = {todo}
-             key = {key}
-             onRemove = {onRemove}
-             onToggle = {onToggle}
-             style = {style}
+             todo={todo}
+             key={key}
+             onRemove={onRemove}
+             onToggle={onToggle}
+             style={style}
            />
-         )
+         );
        },
        [onRemove, onToggle, todos]
-     )
+     );
      return (
        <List
          className="TodoList"
@@ -276,7 +280,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
          rowHeight={65}
          rowRenderer={rowRenderer}
          list={todos}
-         style={{outline: 'none'}}
+         style={{ outline: "none" }}
        />
      );
    };
