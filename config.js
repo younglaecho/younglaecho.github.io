@@ -25,8 +25,8 @@ module.exports = {
     },
   ],
   author: {
-    name: 'Younrae Cho',
-    photo: '/photo.jpg',
+    name: 'Youngrae Cho',
+    photo: '/photo.jpeg',
     bio: 'TIL Blog',
     contacts: {
       email: '',
