@@ -4,7 +4,7 @@ date: "2021-06-25T13:00:00.169Z"
 template: "post"
 draft: false
 slug: "react-todoapp-optimization"
-category: "gatsby"
+category: "react"
 tags:
   - "react"
 description: "리액트 일정관리 앱 컴포넌트 성능최적화"
@@ -22,7 +22,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
      ```javascript
      //App.js
-
+  
      function createBulkTodos() {
        const array = [];
        for (let i = 0; i <=2500; i++) {
@@ -39,10 +39,10 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
      ```javascript
      //App.js
-
+  
      const App = () => {
        const [todos, setTodos] = useState(createBulkTodos);
-
+  
        const nextId = useRef(2501);
      ... ...
      ```
@@ -136,7 +136,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    6.1. useState의 함수형 업데이트
 
-   setState의 함수값으로 어떤 값을 넣지 않고, 기존 state를 변환시켜주는 함수를 매개변수로 넣을 수 있다.
+   setState의 매개변수로 값을 넣지 않고, 기존 state를 변환시켜주는 함수를 매개변수로 넣을 수 있다.
 
    ```javascript
    cosnt[(number, setNumber)] = useState(0);
@@ -249,12 +249,12 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
 
    ```javascript
    //TodoList.js
-
+   
    import React, { useCallback } from "react";
    import { List } from "react-virtualized";
    import TodoListItem from "./TodoListItem";
    import "./TodoList.scss";
-
+   
    const TodoList = ({ todos, onRemove, onToggle }) => {
      const rowRenderer = useCallback(
        ({ index, key, style }) => {
@@ -284,7 +284,7 @@ description: "리액트 일정관리 앱 컴포넌트 성능최적화"
        />
      );
    };
-
+   
    export default TodoList;
    ```
 
